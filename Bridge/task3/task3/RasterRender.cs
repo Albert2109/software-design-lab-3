@@ -10,7 +10,7 @@ namespace task3
     {
         public void Render(string shapeName)
         {
-            Console.WriteLine($"Drawing {shapeName} as vectors.");
+            Console.WriteLine($"Drawing {shapeName} as  pixels.");
         }
     }
 }
