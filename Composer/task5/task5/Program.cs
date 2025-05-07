@@ -4,18 +4,30 @@ internal class Program
 {
     private static void Main()
     {
-        LightElementNode div = new LightElementNode("div");
+        var div = new LightElementNode("div");
         div.AddClass("container");
 
-        LightElementNode ul = new LightElementNode("ul");
+        var ul = new LightElementNode("ul");
         ul.AddClass("list");
 
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 1") } });
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 2") } });
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 3") } });
-
         div.AddChild(ul);
 
-        Console.WriteLine(div.OuterHTML);
+        // Ітерація у глибину
+        Console.WriteLine("-- Depth-First Traversal --");
+        var dfsIt = div.CreateIterator();
+        while (dfsIt.MoveNext())
+            Console.WriteLine(dfsIt.Current.OuterHTML);
+
+        // Ітерація за CSS-селектором (фільтрація)
+        Console.WriteLine("-- CSS Selector Iterator (.list) --");
+        var cssIt = new FilterIterator<LightNode>(
+            div.CreateIterator(),
+            node => node is LightElementNode el && el.Classes.Contains("list")
+        );
+        while (cssIt.MoveNext())
+            Console.WriteLine(((LightElementNode)cssIt.Current).OuterHTML);
     }
 }
