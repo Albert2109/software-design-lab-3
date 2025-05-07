@@ -1,21 +1,33 @@
-﻿using task5;
+﻿using System.Text;
+using task5;
 
 internal class Program
 {
     private static void Main()
     {
-        LightElementNode div = new LightElementNode("div");
-        div.AddClass("container");
+        Console.OutputEncoding = Encoding.UTF8;
+        var root = new LightElementNode("div");
+        root.AddClass("container");
 
-        LightElementNode ul = new LightElementNode("ul");
+        var ul = new LightElementNode("ul");
         ul.AddClass("list");
 
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 1") } });
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 2") } });
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 3") } });
+        root.AddChild(ul);
 
-        div.AddChild(ul);
+        for (int i = 1; i <= 3; i++)
+        {
+            var li = new LightElementNode("li");
+            li.AddChild(new LightTextNode($"Item {i}"));
+            ul.AddChild(li);
+        }
 
-        Console.WriteLine(div.OuterHTML);
+        Console.WriteLine("\nПочатковий рендер\n");
+        Console.WriteLine(root.Render());
+
+        var second = ul.Children.OfType<LightElementNode>().Skip(1).First();
+        ul.RemoveChild(second);
+
+        Console.WriteLine("\nПісля видалення другого елемента\n");
+        Console.WriteLine(root.Render());
     }
 }

@@ -6,14 +6,29 @@ using System.Threading.Tasks;
 
 namespace task5
 {
-    public class LightTextNode:LightNode
+    public class LightTextNode : LightNode
     {
-        private string text;
-        public LightTextNode(string text)
+        private readonly string _text;
+
+        public LightTextNode(string text) : base()
         {
-            this.text = text;
+            _text = text;
         }
-        public override string OuterHTML => text;
-        public override string InnerHTML => text;
+
+        protected override string RenderCore(int indentLevel)
+        {
+            var indent = new string(' ', indentLevel);
+            OnBeforeTextRendered();
+            var result = indent + _text;
+            OnTextRendered(result);
+            return result;
+        }
+
+        protected virtual void OnBeforeTextRendered() { }
+        protected virtual void OnTextRendered(string text)
+        {
+            Console.WriteLine($"Text rendered: {text}");
+        }
     }
+
 }
