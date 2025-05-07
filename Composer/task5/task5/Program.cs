@@ -1,21 +1,19 @@
-﻿using task5;
+﻿using System;
+using task5;
 
 internal class Program
 {
     private static void Main()
     {
-        LightElementNode div = new LightElementNode("div");
-        div.AddClass("container");
-
-        LightElementNode ul = new LightElementNode("ul");
-        ul.AddClass("list");
-
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 1") } });
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 2") } });
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 3") } });
-
-        div.AddChild(ul);
-
-        Console.WriteLine(div.OuterHTML);
+        var appRoot = new LightElementNode("div");
+        appRoot.AddChild(new LightElementNode("p")
+        {
+            Children = { new LightTextNode("Feeling the vibe!") }
+        });
+        Console.WriteLine("Press H (happy), S (sad), U (surprise), any other for neutral:");
+        var key = Console.ReadKey(true).Key;
+        var renderer = new Renderer();
+        renderer.HandleInput(key);
+        Console.WriteLine(renderer.Render(appRoot));
     }
 }
