@@ -15,5 +15,9 @@ namespace task5
         }
         public override string OuterHTML => text;
         public override string InnerHTML => text;
+        public override void Accept(ILightVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
     }
 }
