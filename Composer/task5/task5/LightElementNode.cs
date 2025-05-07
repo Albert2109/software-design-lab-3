@@ -12,7 +12,6 @@ namespace task5
         public bool IsSelfClosing { get; }
         public List<string> Classes { get; }
         public List<LightNode> Children { get; }
-
         public LightElementNode(string tagName, bool isSelfClosing = false)
         {
             TagName = tagName;
@@ -20,10 +19,8 @@ namespace task5
             Classes = new List<string>();
             Children = new List<LightNode>();
         }
-
         public void AddClass(string cls) => Classes.Add(cls);
         public void AddChild(LightNode child) => Children.Add(child);
-
         public override string OuterHTML
         {
             get
@@ -33,10 +30,8 @@ namespace task5
                 return $"<{TagName}{cls}>{InnerHTML}</{TagName}>";
             }
         }
-
         public override string InnerHTML => string.Concat(Children.Select(c => c.OuterHTML));
 
-        // Factory method for iterator
         public IIterator<LightNode> CreateIterator() => new DepthFirstIterator(this);
     }
 }
