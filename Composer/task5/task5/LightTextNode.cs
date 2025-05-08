@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace task5
 {
@@ -29,6 +25,11 @@ namespace task5
         {
             Console.WriteLine($"Text rendered: {text}");
         }
-    }
 
+      
+        public override void Accept(ILightVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+    }
 }
