@@ -9,7 +9,19 @@ internal class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
 
-      
+       
+        var appRoot = new LightElementNode("div");
+        appRoot.AddChild(new LightElementNode("p")
+        {
+            Children = { new LightTextNode("Feeling the vibe!") }
+        });
+        Console.WriteLine("Press H (happy), S (sad), U (surprise), any other for neutral:");
+        var key = Console.ReadKey(true).Key;
+        var renderer = new Renderer();
+        renderer.HandleInput(key);
+        Console.WriteLine(renderer.Render(appRoot));
+
+       
         var root = new LightElementNode("div");
         root.AddClass("container");
 
@@ -32,7 +44,7 @@ internal class Program
         Console.WriteLine("\nПісля видалення другого елемента\n");
         Console.WriteLine(root.Render());
 
-       
+        
         Console.WriteLine("\nDepth-First Traversal");
         var dfsIt = root.CreateIterator();
         while (dfsIt.MoveNext())
@@ -46,7 +58,7 @@ internal class Program
         while (cssIt.MoveNext())
             Console.WriteLine(((LightElementNode)cssIt.Current).OuterHTML);
 
-       
+        
         Console.WriteLine("\nMacro Command Demo");
         var cmdMgr = new CommandManager();
         var macro = new MacroCommand();
@@ -59,7 +71,7 @@ internal class Program
         cmdMgr.Redo();
         Console.WriteLine("After Redo:      " + root.OuterHTML);
 
-      
+ 
         Console.WriteLine("\nAccessibility Issues");
         var visitor = new AccessibilityVisitor();
         root.Accept(visitor);
