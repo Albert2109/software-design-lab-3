@@ -1,10 +1,11 @@
-﻿using task5;
+using System;
+using task5;
 
 internal class Program
 {
-   private static void Main()
+    private static void Main()
     {
-        // Створюємо базове дерево
+      
         var root = new LightElementNode("div");
         root.AddClass("container");
 
@@ -13,11 +14,23 @@ internal class Program
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 1") } });
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 2") } });
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 3") } });
-
         root.AddChild(ul);
 
        
-        Console.WriteLine("Depth-First Traversal");
+        var img = new LightElementNode("img", isSelfClosing: true);
+        root.AddChild(img);
+        var link = new LightElementNode("a");
+        link.AddChild(new LightTextNode("click here"));
+        root.AddChild(link);
+        var p = new LightElementNode("p");
+        p.AddChild(new LightTextNode("Just a paragraph"));
+        root.AddChild(p);
+
+       
+        Console.WriteLine(root.OuterHTML);
+
+      
+        Console.WriteLine("\nDepth-First Traversal");
         var dfsIt = root.CreateIterator();
         while (dfsIt.MoveNext())
             Console.WriteLine(dfsIt.Current.OuterHTML);
@@ -30,23 +43,23 @@ internal class Program
         while (cssIt.MoveNext())
             Console.WriteLine(((LightElementNode)cssIt.Current).OuterHTML);
 
-
-
+    
         Console.WriteLine("\nMacro Command Demo");
         var cmdMgr = new CommandManager();
         var macro = new MacroCommand();
-        
-        // Додаємо кнопку та клас до кореневого div
         macro.Add(new AddElementCommand(root, "button"));
         macro.Add(new AddClassCommand(root, "btn-primary"));
-        
         cmdMgr.Execute(macro);
         Console.WriteLine("After Execute:   " + root.OuterHTML);
-
         cmdMgr.Undo();
         Console.WriteLine("After Undo:      " + root.OuterHTML);
-
         cmdMgr.Redo();
         Console.WriteLine("After Redo:      " + root.OuterHTML);
+
+   
+        Console.WriteLine("\nAccessibility Issues");
+        var visitor = new AccessibilityVisitor();
+        root.Accept(visitor);
+        visitor.Issues.ForEach(Console.WriteLine);
     }
 }

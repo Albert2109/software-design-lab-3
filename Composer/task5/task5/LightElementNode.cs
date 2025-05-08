@@ -1,8 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace task5
 {
@@ -10,28 +8,49 @@ namespace task5
     {
         public string TagName { get; }
         public bool IsSelfClosing { get; }
-        public List<string> Classes { get; }
-        public List<LightNode> Children { get; }
+
+        
+        public List<string> CssClasses { get; } = new List<string>();
+        public Dictionary<string, string> Attributes { get; } = new Dictionary<string, string>();
+
+        
+        public List<LightNode> Children { get; } = new List<LightNode>();
+
         public LightElementNode(string tagName, bool isSelfClosing = false)
         {
             TagName = tagName;
             IsSelfClosing = isSelfClosing;
-            Classes = new List<string>();
-            Children = new List<LightNode>();
         }
-        public void AddClass(string cls) => Classes.Add(cls);
+
+        public void AddClass(string className) => CssClasses.Add(className);
         public void AddChild(LightNode child) => Children.Add(child);
+        public void RemoveChild(LightNode child) => Children.Remove(child);
+
         public override string OuterHTML
         {
             get
             {
-                var cls = Classes.Any() ? $" class=\"{string.Join(" ", Classes)}\"" : string.Empty;
-                if (IsSelfClosing) return $"<{TagName}{cls}/>";
-                return $"<{TagName}{cls}>{InnerHTML}</{TagName}>";
+                var classAttr = CssClasses.Any()
+                    ? $" class=\"{string.Join(" ", CssClasses)}\""
+                    : string.Empty;
+                var otherAttrs = Attributes.Any()
+                    ? string.Concat(Attributes.Select(kv => $" {kv.Key}=\"{kv.Value}\""))
+                    : string.Empty;
+
+                if (IsSelfClosing)
+                    return $"<{TagName}{classAttr}{otherAttrs} />";
+
+                return $"<{TagName}{classAttr}{otherAttrs}>{InnerHTML}</{TagName}>";
             }
         }
-        public override string InnerHTML => string.Concat(Children.Select(c => c.OuterHTML));
 
+        public override string InnerHTML
+            => string.Concat(Children.Select(c => c.OuterHTML));
+
+        
         public IIterator<LightNode> CreateIterator() => new DepthFirstIterator(this);
+
+        
+        public override void Accept(ILightVisitor visitor) => visitor.Visit(this);
     }
 }
