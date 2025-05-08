@@ -2,25 +2,51 @@
 
 internal class Program
 {
-    private static void Main()
+   private static void Main()
     {
-        var appRoot = new LightElementNode("div");
-        appRoot.AddClass("container");
+        // Створюємо базове дерево
+        var root = new LightElementNode("div");
+        root.AddClass("container");
+
         var ul = new LightElementNode("ul");
         ul.AddClass("list");
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 1") } });
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 2") } });
         ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 3") } });
-        appRoot.AddChild(ul);
-        Console.WriteLine(appRoot.OuterHTML);
-        Console.WriteLine("Macro Command");
+
+        root.AddChild(ul);
+
+       
+        Console.WriteLine("Depth-First Traversal");
+        var dfsIt = root.CreateIterator();
+        while (dfsIt.MoveNext())
+            Console.WriteLine(dfsIt.Current.OuterHTML);
+
+        Console.WriteLine("\nCSS Selector Iterator (.list)");
+        var cssIt = new FilterIterator<LightNode>(
+            root.CreateIterator(),
+            node => node is LightElementNode el && el.CssClasses.Contains("list")
+        );
+        while (cssIt.MoveNext())
+            Console.WriteLine(((LightElementNode)cssIt.Current).OuterHTML);
+
+
+
+        Console.WriteLine("\nMacro Command Demo");
         var cmdMgr = new CommandManager();
         var macro = new MacroCommand();
-        macro.Add(new AddElementCommand(appRoot, "button"));
-        macro.Add(new AddClassCommand(appRoot, "btn-primary"));
+        
+        // Додаємо кнопку та клас до кореневого div
+        macro.Add(new AddElementCommand(root, "button"));
+        macro.Add(new AddClassCommand(root, "btn-primary"));
+        
         cmdMgr.Execute(macro);
-        Console.WriteLine(appRoot.OuterHTML);
+        Console.WriteLine("After Execute:   " + root.OuterHTML);
+
         cmdMgr.Undo();
-        Console.WriteLine("After undo: " + appRoot.OuterHTML);
+        Console.WriteLine("After Undo:      " + root.OuterHTML);
+
+        cmdMgr.Redo();
+        Console.WriteLine("After Redo:      " + root.OuterHTML);
     }
 }
