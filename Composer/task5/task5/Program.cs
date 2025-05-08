@@ -1,35 +1,38 @@
 using System;
+using System.Linq;
+using System.Text;
 using task5;
 
 internal class Program
 {
     private static void Main()
     {
+        Console.OutputEncoding = Encoding.UTF8;
+
       
         var root = new LightElementNode("div");
         root.AddClass("container");
 
         var ul = new LightElementNode("ul");
         ul.AddClass("list");
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 1") } });
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 2") } });
-        ul.AddChild(new LightElementNode("li") { Children = { new LightTextNode("Item 3") } });
         root.AddChild(ul);
+        for (int i = 1; i <= 3; i++)
+        {
+            var li = new LightElementNode("li");
+            li.AddChild(new LightTextNode($"Item {i}"));
+            ul.AddChild(li);
+        }
+
+        Console.WriteLine("\nПочатковий рендер\n");
+        Console.WriteLine(root.Render());
+
+        var second = ul.Children.OfType<LightElementNode>().Skip(1).First();
+        ul.RemoveChild(second);
+
+        Console.WriteLine("\nПісля видалення другого елемента\n");
+        Console.WriteLine(root.Render());
 
        
-        var img = new LightElementNode("img", isSelfClosing: true);
-        root.AddChild(img);
-        var link = new LightElementNode("a");
-        link.AddChild(new LightTextNode("click here"));
-        root.AddChild(link);
-        var p = new LightElementNode("p");
-        p.AddChild(new LightTextNode("Just a paragraph"));
-        root.AddChild(p);
-
-       
-        Console.WriteLine(root.OuterHTML);
-
-      
         Console.WriteLine("\nDepth-First Traversal");
         var dfsIt = root.CreateIterator();
         while (dfsIt.MoveNext())
@@ -43,7 +46,7 @@ internal class Program
         while (cssIt.MoveNext())
             Console.WriteLine(((LightElementNode)cssIt.Current).OuterHTML);
 
-    
+       
         Console.WriteLine("\nMacro Command Demo");
         var cmdMgr = new CommandManager();
         var macro = new MacroCommand();
@@ -56,7 +59,7 @@ internal class Program
         cmdMgr.Redo();
         Console.WriteLine("After Redo:      " + root.OuterHTML);
 
-   
+      
         Console.WriteLine("\nAccessibility Issues");
         var visitor = new AccessibilityVisitor();
         root.Accept(visitor);
